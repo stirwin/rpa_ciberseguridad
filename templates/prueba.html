@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verificación de enlaces</title>
+</head>
+<body>
+    <h1>Verificación de enlaces</h1>
+    <form method="POST" action="">
+        <label for="enlaces">Ingrese los enlaces separados por coma:</label><br>
+        <input type="text" id="enlaces" name="enlaces"><br><br>
+        <input type="submit" value="Verificar">
+    </form>
+
+    <h1>Resultados de verificación de enlaces</h1>
+    <h2>Enlaces en la lista verde:</h2>
+    <ul>
+        {% for link in verde %}
+        <li>{{ link }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Enlaces en la lista gris:</h2>
+    <ul>
+        {% for link in gris %}
+        <li>{{ link }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Enlaces en la lista negra:</h2>
+    <ul>
+        {% for link in negra %}
+        <li>{{ link }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

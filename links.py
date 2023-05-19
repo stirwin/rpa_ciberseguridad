@@ -61,7 +61,7 @@ def has_redirect(link):
     except:
         return False
 
-@app.route('/resultados', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         enlaces = request.form['enlaces']
@@ -86,7 +86,7 @@ def index():
                     resultado = "lista gris"
                     gris.append(link.strip())
 
-        return render_template('resultados.html', verde=verde, gris=gris, negra=negra)
+        return render_template('index.html', verde=verde, gris=gris, negra=negra)
 
     return render_template('index.html')
 
