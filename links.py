@@ -3,7 +3,10 @@ import requests
 import tldextract
 from bs4 import BeautifulSoup
 import ssl
-
+import json
+import socket
+import whois
+import smtplib
 app = Flask(__name__)
 app.template_folder = './templates'  # Ruta a la carpeta que contiene los archivos HTML
 
@@ -141,6 +144,113 @@ def website_information():
             return render_template('website_information.html', info=info)
       
     return render_template('website_information.html')
+
+
+@app.route('/informacion_numero', methods=['GET', 'POST'])
+def phone_number_information():
+    if request.method == 'POST':
+        url = "https://api.apilayer.com/number_verification/validate"
+    
+        numero = request.form['numero']
+    
+        payload = {
+            'number': numero,
+            'apikey': 'D25NAi6frOY6wijqC638Tni4Iv1HxRP4'
+        }
+    
+        response = requests.get(url, params=payload)
+    
+        status_code = response.status_code
+        result = json.loads(response.text)
+        return render_template('informacion_numero.html', status_code=status_code, result=result)
+    return render_template('informacion_numero.html')
+  
+
+@app.route('/dominio_informacion', methods=['GET', 'POST'])
+def dominio_information():
+    if request.method == 'POST':
+        dominio = request.form['dominio']
+        
+        # Realiza una búsqueda de DNS para obtener la dirección IP del dominio
+        direccion_ip = socket.gethostbyname(dominio)
+        
+        # Obtiene el certificado SSL del dominio (si está disponible)
+        certificado_ssl = None
+        try:
+            contexto = ssl.create_default_context()
+            with socket.create_connection((dominio, 443)) as sock:
+                with contexto.wrap_socket(sock, server_hostname=dominio) as ssock:
+                    certificado_ssl = ssock.getpeercert()
+        except:
+            pass
+        
+        # Prepara la información para pasarla a la plantilla
+        informacion = {
+            'dominio': dominio,
+            'direccion_ip': direccion_ip,
+            'certificado_ssl': certificado_ssl
+        }
+        
+        return render_template('dominio_informacion.html', informacion=informacion)
+    
+    return render_template('dominio_informacion.html')
+
+
+
+@app.route('/cuentas', methods=['GET', 'POST'])
+def analyze_accounts():
+    if request.method == 'POST':
+        email = request.form['email']
+        
+        # Clave de API para acceder a la API de Validación de Correo Electrónico de Abstract
+        api_key = "4ef36f0c74c64c9780608494573effc6"
+        
+        # Construye la URL de la API con el correo electrónico y la clave de API
+        url = f"https://emailvalidation.abstractapi.com/v1/?api_key={api_key}&email={email}"
+        
+        # Envía una solicitud GET a la API
+        response = requests.get(url)
+        
+        # Decodifica la respuesta del JSON con codificación UTF-8
+        result = json.loads(response.text.encode('utf-8'))
+        
+        # Diccionario de traducción inglés-español
+        traducciones = {
+            'email': 'correo electrónico',
+            'status_code': 'Código de estado',
+            'result': {
+                'autocorrect': 'Autocorrección',
+                'deliverability': 'Entregabilidad',
+                'quality_score': 'Puntaje de calidad del 0.00 a 1.0',
+                'is_valid_format': 'Formato válido',
+                'is_free_email': 'Correo electrónico gratuito',
+                'is_disposable_email': 'Correo electrónico desechable',
+                'is_role_email': 'Correo electrónico de rol',
+                'is_catchall_email': 'Correo electrónico catch-all',
+                'is_mx_found': 'MX encontrado',
+                'is_smtp_valid': 'SMTP válido'
+            }
+        }
+        
+        # Función para traducir los resultados al español
+        def traducir_resultados(result):
+            traducidos = {}
+            for clave, valor in result.items():
+                if clave in traducciones['result']:
+                    clave_traducida = traducciones['result'][clave]
+                    traducidos[clave_traducida] = valor
+            return traducidos
+        
+        # Prepara la información para pasarla a la plantilla
+        informacion = {
+            'email': email,
+            'status_code': response.status_code,
+            'result': traducir_resultados(result)
+        }
+        
+        return render_template('cuentas.html', informacion=informacion)
+    
+    return render_template('cuentas.html')
 
 
 

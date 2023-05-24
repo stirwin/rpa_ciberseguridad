@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Información de número de teléfono</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Información de número de teléfono</h1>
+    <form method="POST" >
+        <label for="numero">Número de teléfono:</label>
+        <input type="text" id="numero" name="numero" required>
+        <input type="submit" value="Consultar">
+    </form>
+
+    {% if result %}
+    <h2>Código de estado: {{ status_code }}</h2>
+    <h2>Resultado:</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Clave</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for key, value in result.items() %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+
+</html>

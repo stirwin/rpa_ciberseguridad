@@ -8,55 +8,57 @@ import socket
 import whois
 import smtplib
 
-app = Flask(__name__)
-app.template_folder = './templates' # Ruta a la carpeta que contiene los archivos HTML
 
-@app.route('/website_information', methods=['GET', 'POST'])
 def website_information():
-    if request.method == 'POST':
-        url = request.form['url']
+    url = input("Ingrese la URL del sitio web a analizar: ")
     
-        response = requests.get(url)
+    response = requests.get(url)
     
-        if response.status_code == 200:
-            # Realiza el análisis de la página web y extrae la información relevante
-            soup = BeautifulSoup(response.text, 'html.parser')
+    if response.status_code == 200:
+        # Realiza el análisis de la página web y extrae la información relevante
+        soup = BeautifulSoup(response.text, 'html.parser')
         
-            # Extrae el título de la página
-            title = soup.title.string
+        # Extrae el título de la página
+        title = soup.title.string
         
-            # Extrae los enlaces de la página
-            links = [link.get('href') for link in soup.find_all('a')]
+        # Extrae los enlaces de la página
+        links = [link.get('href') for link in soup.find_all('a')]
         
-            # Extrae los encabezados de la página
-            headers = [header.text for header in soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])]
+        # Extrae los encabezados de la página
+        headers = [header.text for header in soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])]
         
-            # Verifica si la página web utiliza el protocolo HTTPS
-            is_https = url.startswith('https')
+        # Verifica si la página web utiliza el protocolo HTTPS
+        is_https = url.startswith('https')
         
-            # Verifica si la página web tiene un certificado SSL válido
-            has_valid_ssl = False
-            if is_https:
-                hostname = url.split('/')[2]
-                try:
-                    ssl.create_default_context().check_hostname = False
-                    ssl.SSLContext().verify_mode = ssl.CERT_NONE
-                    ssl.get_server_certificate((hostname, 443))
-                    has_valid_ssl = True
-                except:
-                    has_valid_ssl = False
+        # Verifica si la página web tiene un certificado SSL válido
+        has_valid_ssl = False
+        if is_https:
+            hostname = url.split('/')[2]
+            try:
+                ssl.create_default_context().check_hostname = False
+                ssl.SSLContext().verify_mode = ssl.CERT_NONE
+                ssl.get_server_certificate((hostname, 443))
+                has_valid_ssl = True
+            except:
+                has_valid_ssl = False
         
-            # Muestra la información obtenida
-            info = {
-                'title': title,
-                'links': links,
-                'headers': headers,
-                'is_secure': is_https and has_valid_ssl
-            }
-        
-            return render_template('website_information.html', info=info)
-      
-    return render_template('website_information.html')
+        # Muestra la información obtenida
+        print("Información del sitio web", url)
+        print("Título:", title)
+        print("Enlaces:", links)
+        print("Encabezados:", headers)
+        if is_https and has_valid_ssl:
+            print("¿Es segura?: Sí")
+            print("Protocolos de seguridad: HTTPS, Certificado SSL válido")
+        else:
+            print("¿Es segura?: No")
+            if not is_https:
+                print("Protocolos de seguridad faltantes: HTTPS")
+            if not has_valid_ssl:
+                print("Protocolos de seguridad faltantes: Certificado SSL válido")
+    else:
+        print("No se pudo acceder al sitio web. Verifique la URL e intente nuevamente.")
+
 
 #segunda funcion
 
@@ -145,49 +147,49 @@ def is_dark_web(url):
         return True
     else:
         return False
-
-def   analyze_vulnerability():
+def analyze_vulnerability():
     url = input("Ingrese la URL del sitio web a analizar: ")
-    #se determina si la pagina puede estar en la dep web
+    
+    # Se determina si la página puede estar en la dark web
     if is_dark_web(url):
         print(f"{url} está en la dark web.")
         return
-
+    
     try:
-        response = requests.get(url)
-        response.raise_for_status()
-
-        # Realiza el análisis de la página web y extrae la información relevante en la web normal y en la depp web
+        response = requests.get(url, verify=True)
+        
+        # Realiza el análisis de la página web y extrae la información relevante
         soup = BeautifulSoup(response.text, 'html.parser')
-
-        # Verifica si la página web utiliza el protocolo HTTPS para  verificar el funcionamiento de esta
+        
+        # Verifica si la página web utiliza el protocolo HTTPS
         is_https = url.startswith('https')
-
-        # Verifica si la página web tiene un certificado SSL válido en la web normal y en la depp web
-        has_valid_ssl = False
-        if is_https:
-            hostname = url.split('/')[2]
-            context = ssl.create_default_context()
-            try:
-                with context.wrap_socket(socket.socket(), server_hostname=hostname) as sock:
-                    sock.connect((hostname, 443))
-                    has_valid_ssl = True
-            except ssl.SSLError:
-                has_valid_ssl = False
-
+        
         # Detecta posibles problemas de seguridad y datos vulnerables
         security_issues = []
         vulnerable_data = []
-
+        
         if not is_https:
             security_issues.append("La página no utiliza HTTPS, lo que puede permitir ataques de intermediarios y robo de datos.")
-
-        if not has_valid_ssl:
-            security_issues.append("El certificado SSL de la página no es válido, lo que puede poner en riesgo la privacidad de los datos transmitidos.")
-
+        else:
+            security_issues.append("La página utiliza el protocolo HTTPS, lo que la hace segura y efectiva.")
+        
+        # Verifica si hay formularios que envíen información sin cifrar
+        insecure_forms = soup.find_all('form', action=lambda x: x and not x.startswith('https'))
+        if insecure_forms:
+            security_issues.append(f"Se encontraron {len(insecure_forms)} formularios que envían información sin cifrar.")
+        
+        # Verifica si hay enlaces a páginas no seguras
+        insecure_links = soup.find_all('a', href=lambda x: x and not x.startswith('https'))
+        if insecure_links:
+            security_issues.append(f"Se encontraron {len(insecure_links)} enlaces a páginas no seguras.")
+        
+        # Verifica si hay contenido sospechoso en la página
+        suspicious_content = soup.find_all(text=re.compile(r'(?i)hack|phish|scam|malware|virus'))
+        if suspicious_content:
+            security_issues.append(f"Se encontró contenido sospechoso en la página: {', '.join(suspicious_content)}")
+        
         # Aquí puedes agregar más verificaciones y detecciones de problemas de seguridad según tus necesidades.
-        # Por ejemplo, puedes buscar formularios que envíen información sin cifrar, enlaces a páginas no seguras, etc.
-
+        
         # Muestra la información obtenida
         print("Información del sitio web:", url)
         print("---")
@@ -196,19 +198,22 @@ def   analyze_vulnerability():
             for issue in security_issues:
                 print("-", issue)
         else:
-            print("- No se encontraron problemas de seguridad identificados.")
-
+            print("- No se encontraron problemas de seguridad identificados. La página es segura y cumple con los protocolos de seguridad (HTTPS).")
+        
         print("---")
         print("Datos potencialmente vulnerables:")
         if vulnerable_data:
             for data in vulnerable_data:
                 print("-", data)
         else:
-            print("- No se encontraron datos vulnerables identificados.")
-
+            print("- No se encontraron datos vulnerables identificados. La página cumple con los estándares de seguridad y protección de datos.")
+    
     except requests.exceptions.RequestException as e:
         print("No se pudo acceder al sitio web. Verifique la URL e intente nuevamente.")
         print("Error:", str(e))
+
+
+
 
 # Función principal del programa, pequeño menu para demostrar y automatizar las funciones
 def main():
@@ -252,3 +257,6 @@ def main():
         
         else:
             print("Opción inválida. Intente de nuevo.")
+
+# Llamada a la función principal del programa
+main()
