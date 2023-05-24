@@ -19,7 +19,7 @@
     <div class="bg-principal">
 
         <!-- navbar -->
-        <nav class="bg-principal2 border-gray-200 ">
+        <nav class="bg-principal2 border-gray-200 sticky top-0">
             <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
                 <a href="#" class="flex items-center">
                     <div class="rounded-full border-8 p-2 border-azulejo">
@@ -47,7 +47,7 @@
                                 aria-current="page">Home</a>
                         </li>
                         <li>
-                            <a href="#"
+                            <a href="#sobrenosotros"
                                 class="block py-2 pl-3 pr-4 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-100 md:p-0 ">
                                 Sobre nosotros</a>
                         </li>
@@ -56,7 +56,7 @@
                 </div>
                 <div class="">
 
-                    <a href="#btn-submit"
+                    <a href="#analizador"
                         class="bg-yellow-400 text-gray-900 rounded-full font-bold px-8 py-2 shadow-lg">
                         Analiza tu link
                     </a>
@@ -73,13 +73,14 @@
                     <div>
                         <div class="max-w-[500px]" style="word-wrap: break-word;">
                             <div class="p-6">
-                                <h1 class="text-6xl font-bold text-white">Lorem ipsum</h1>
+                                <h1 class="text-6xl font-bold text-white">Analizador de URL</h1>
                             </div>
 
                             <div class="p-6">
                                 <p class="text-2xl font-sans text-white">
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati, error
-                                    voluptatibus! Nisi saepe ipsum
+                                    Nuestro sitio web ofrece una herramienta de análisis de URL que clasifica las
+                                    direcciones en tablas según su nivel de seguridad. Las URL seguras se muestran en
+                                    verde, las relativamente seguras en gris y las peligrosas en negro.
                                 </p>
                             </div>
 
@@ -127,7 +128,7 @@
         </div>
 
         <!-- analizador -->
-        <div class="p-8">
+        <div class="p-8" id="analizador">
             <div class="py-12">
                 <h1 class="text-6xl text-white text-center font-bold">Analiza tu link</h1>
                 <center><img src="/static/images/Line_2.svg" alt="linea2"></center>
@@ -155,29 +156,6 @@
             <!--cuadro de vista del analizador-->
             <div class="pt-24">
                 <div class="container">
-
-                    <!-- <div class="px-8 bg-white rounded-lg" style="height: 500px;">
-                        <div class="py-8">
-                            <h1 class="text-4xl font-bold text-center">Tabla de respuesta </h1>
-                        </div>
-                        <div class="flex justify-center ">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 ">
-                                <div class="bg-gray-500">
-                                    {% for link in verde %}
-                                    <li>{{ link }}</li>
-                                    {% endfor %} </div>
-                                <div class="bg-gray-500">
-                                    {% for link in gris %}
-                                    <li>{{ link }}</li>
-                                    {% endfor %} </div>
-                                <div class="bg-gray-500">
-                                    {% for link in negra %}
-                                    <li>{{ link }}</li>
-                                    {% endfor %}  </div>
-                            </div>
-                        </div>
-                    </div> -->
-
                     <div id="resultado" class="max-w-7xl lg:max-w-8xl mx-auto rounded-lg shadow-lg bg-white">
                         <div class="py-4 px-5">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -189,7 +167,7 @@
                                     <div class="py-3 px2">
                                         <p class="text-sm text-white font-medium">
                                             {% for link in verde %}
-                                                <li class="text-gray-900 list-none px-2"
+                                            <li class="text-gray-900 list-none px-2"
                                                 style="text-shadow: 0px 4px 7px rgba(0, 0, 0, 0.25);">{{ link }}</li>
                                             {% endfor %}
                                         </p>
@@ -203,7 +181,7 @@
                                     <div class="py-3 px2">
                                         <p class="text-sm text-white font-medium">
                                             {% for link in gris %}
-                                                <li class="text-white list-none px-2" >{{ link }}</li>
+                                            <li class="text-white list-none px-2">{{ link }}</li>
                                             {% endfor %}
                                         </p>
                                     </div>
@@ -216,7 +194,7 @@
                                     <div class="py-3 px2">
                                         <p class="text-sm text-white font-medium">
                                             {% for link in negra %}
-                                                <li class="text-white list-none px-2">{{ link }}</li>
+                                            <li class="text-white list-none px-2">{{ link }}</li>
                                             {% endfor %}
                                         </p>
                                     </div>
@@ -229,7 +207,7 @@
         </div>
 
         <!--sobre nosotros-->
-        <div class="py-4">
+        <div class="py-4" id="sobrenosotros">
             <div class="py-4">
                 <h1 class="text-6xl font-bold text-white text-center"
                     style="text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);">Sobre Nosotros</h1>
@@ -246,8 +224,9 @@
                             style="background-image: url('/static/images/Ellipse_13.svg'); height: 200px;">
 
                             <p class="text-2xl text-white" style="word-wrap: break-word; width: 400px;">
-                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                incididunt”.
+                                Somos un equipo dedicado a promover la seguridad en línea a través de nuestro servicio
+                                de análisis de URL. Nuestra misión es brindar información confiable y ayudar a los
+                                usuarios a tomar decisiones informadas al navegar por la web
                             </p>
 
                         </div>
