@@ -1,0 +1,254 @@
+from flask import Flask, render_template, request
+import requests
+import re
+from bs4 import BeautifulSoup
+import ssl
+import json
+import socket
+import whois
+import smtplib
+
+app = Flask(__name__)
+app.template_folder = './templates' # Ruta a la carpeta que contiene los archivos HTML
+
+@app.route('/website_information', methods=['GET', 'POST'])
+def website_information():
+    if request.method == 'POST':
+        url = request.form['url']
+    
+        response = requests.get(url)
+    
+        if response.status_code == 200:
+            # Realiza el análisis de la página web y extrae la información relevante
+            soup = BeautifulSoup(response.text, 'html.parser')
+        
+            # Extrae el título de la página
+            title = soup.title.string
+        
+            # Extrae los enlaces de la página
+            links = [link.get('href') for link in soup.find_all('a')]
+        
+            # Extrae los encabezados de la página
+            headers = [header.text for header in soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])]
+        
+            # Verifica si la página web utiliza el protocolo HTTPS
+            is_https = url.startswith('https')
+        
+            # Verifica si la página web tiene un certificado SSL válido
+            has_valid_ssl = False
+            if is_https:
+                hostname = url.split('/')[2]
+                try:
+                    ssl.create_default_context().check_hostname = False
+                    ssl.SSLContext().verify_mode = ssl.CERT_NONE
+                    ssl.get_server_certificate((hostname, 443))
+                    has_valid_ssl = True
+                except:
+                    has_valid_ssl = False
+        
+            # Muestra la información obtenida
+            info = {
+                'title': title,
+                'links': links,
+                'headers': headers,
+                'is_secure': is_https and has_valid_ssl
+            }
+        
+            return render_template('website_information.html', info=info)
+      
+    return render_template('website_information.html')
+
+#segunda funcion
+
+def phone_number_information():
+
+        url = "https://api.apilayer.com/number_verification/validate?number="
+
+        numero = input("Ingrese el número de teléfono (con código de país): ")
+
+        url += numero
+
+        payload = {}
+        headers = {
+          "apikey": "D25NAi6frOY6wijqC638Tni4Iv1HxRP4"
+        }
+
+        response = requests.request("GET", url, headers=headers, data=payload)
+
+        status_code = response.status_code
+        result = response.text
+
+
+        print("Código de estado:", status_code)
+        print("Resultado:", result)
+
+
+#tercera funcion
+def subdomain_scanner():
+    dominio = input("Ingrese el dominio a escanear: ")
+    
+    # Realiza una búsqueda de DNS para obtener la dirección IP del dominio
+    direccion_ip = socket.gethostbyname(dominio)
+    
+    # Obtiene el certificado SSL del dominio (si está disponible)
+    certificado_ssl = None
+    try:
+        contexto = ssl.create_default_context()
+        with socket.create_connection((dominio, 443)) as sock:
+            with contexto.wrap_socket(sock, server_hostname=dominio) as ssock:
+                certificado_ssl = ssock.getpeercert()
+    except:
+        pass
+    
+    # Muestra la información obtenida
+    print("Información del dominio", dominio)
+    print("Dirección IP:", direccion_ip)
+    if certificado_ssl:
+        print("Certificado SSL: Disponible")
+        # Obtener información adicional del certificado SSL
+        print("Emisor del certificado:", certificado_ssl['issuer'][0][0][1])
+        print("Sujeto del certificado:", certificado_ssl['subject'][0][0][1])
+        print("Fecha de vencimiento del certificado:", certificado_ssl['notAfter'])
+    else:
+        print("Certificado SSL: No disponible")
+
+
+#cuarta funcion
+
+def analyze_accounts():
+    
+   # Analiza una cuenta de correo electrónico utilizando la API de Validación de Correo Electrónico de Abstract.
+  
+    email = input("Ingrese la dirección de correo electrónico para analizar: ")
+    
+    # Clave de API para acceder a la API de Validación de Correo Electrónico de Abstract
+    api_key = "4ef36f0c74c64c9780608494573effc6"
+    
+    # Construye la URL de la API con el correo electrónico y la clave de API
+    url = f"https://emailvalidation.abstractapi.com/v1/?api_key={api_key}&email={email}"
+    
+    # Envía una solicitud GET a la API
+    response = requests.get(url)
+    
+    # Imprime el código de estado de la respuesta
+    print("Código de estado:", response.status_code)
+    
+    # Imprime el contenido de respuesta del servidor
+    print("Respuesta del servidor:")
+    print(response.content)
+
+
+
+def is_dark_web(url):
+    pattern = r'\.onion$'
+    if re.search(pattern, url):
+        return True
+    else:
+        return False
+
+def   analyze_vulnerability():
+    url = input("Ingrese la URL del sitio web a analizar: ")
+    #se determina si la pagina puede estar en la dep web
+    if is_dark_web(url):
+        print(f"{url} está en la dark web.")
+        return
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+
+        # Realiza el análisis de la página web y extrae la información relevante en la web normal y en la depp web
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Verifica si la página web utiliza el protocolo HTTPS para  verificar el funcionamiento de esta
+        is_https = url.startswith('https')
+
+        # Verifica si la página web tiene un certificado SSL válido en la web normal y en la depp web
+        has_valid_ssl = False
+        if is_https:
+            hostname = url.split('/')[2]
+            context = ssl.create_default_context()
+            try:
+                with context.wrap_socket(socket.socket(), server_hostname=hostname) as sock:
+                    sock.connect((hostname, 443))
+                    has_valid_ssl = True
+            except ssl.SSLError:
+                has_valid_ssl = False
+
+        # Detecta posibles problemas de seguridad y datos vulnerables
+        security_issues = []
+        vulnerable_data = []
+
+        if not is_https:
+            security_issues.append("La página no utiliza HTTPS, lo que puede permitir ataques de intermediarios y robo de datos.")
+
+        if not has_valid_ssl:
+            security_issues.append("El certificado SSL de la página no es válido, lo que puede poner en riesgo la privacidad de los datos transmitidos.")
+
+        # Aquí puedes agregar más verificaciones y detecciones de problemas de seguridad según tus necesidades.
+        # Por ejemplo, puedes buscar formularios que envíen información sin cifrar, enlaces a páginas no seguras, etc.
+
+        # Muestra la información obtenida
+        print("Información del sitio web:", url)
+        print("---")
+        print("Estado de seguridad:")
+        if security_issues:
+            for issue in security_issues:
+                print("-", issue)
+        else:
+            print("- No se encontraron problemas de seguridad identificados.")
+
+        print("---")
+        print("Datos potencialmente vulnerables:")
+        if vulnerable_data:
+            for data in vulnerable_data:
+                print("-", data)
+        else:
+            print("- No se encontraron datos vulnerables identificados.")
+
+    except requests.exceptions.RequestException as e:
+        print("No se pudo acceder al sitio web. Verifique la URL e intente nuevamente.")
+        print("Error:", str(e))
+
+# Función principal del programa, pequeño menu para demostrar y automatizar las funciones
+def main():
+    while True:
+        print("---- MENÚ ----")
+        print("1. Carding")
+        print("2. Accounts")
+        print("3. Vulnerability")
+        print("4. Salir")
+        
+        option = input("Seleccione una opción: ")
+        
+        if option == "1":
+            print("---- CARDING ----")
+            print("1. Información de sitio web")
+            print("2. Información de número de teléfono")
+            print("3. Escáner de subdominio")
+            print("4. Verificación de dirección de correo electrónico")
+            
+            carding_option = input("Seleccione una opción: ")
+            
+            if carding_option == "1":
+                website_information()
+            elif carding_option == "2":
+                phone_number_information()
+            elif carding_option == "3":
+                subdomain_scanner()
+          
+            else:
+                print("Opción inválida. Intente de nuevo.")
+        
+        elif option == "2":
+            analyze_accounts()
+        
+        elif option == "3":
+            analyze_vulnerability()
+        
+        elif option == "4":
+            print("¡Hasta luego!")
+            break
+        
+        else:
+            print("Opción inválida. Intente de nuevo.")

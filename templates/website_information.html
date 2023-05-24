@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <body>
+    
+      <h1>Ingrese una URL para obtener información del sitio web.</h1>
+    <form method="post">
+        <input type="text" name="url" placeholder="Ingrese la URL del sitio web" required>
+        <input type="submit" value="Obtener información">
+    </form>  
+    
+    {% if info %}
+        <h1>{{ info.title }}</h1>
+        <h2>Enlaces:</h2>
+        <ul>
+            {% for link in info.links %}
+                <li><a href="{{ link }}">{{ link }}</a></li>
+            {% endfor %}
+        </ul>
+        <h2>Encabezados:</h2>
+        <ul>
+            {% for header in info.headers %}
+                <li>{{ header }}</li>
+            {% endfor %}
+        </ul>
+        <h2>Seguridad:</h2>
+        {% if info.is_secure %}
+            <p>El sitio web utiliza el protocolo HTTPS y tiene un certificado SSL válido.</p>
+        {% else %}
+            <p>El sitio web no utiliza el protocolo HTTPS o no tiene un certificado SSL válido.</p>
+        {% endif %}
+    {% else %}
+      
+    {% endif %}
+      </body>
+</body>
+</html>

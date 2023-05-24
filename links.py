@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 import requests
 import tldextract
 from bs4 import BeautifulSoup
+import ssl
 
 app = Flask(__name__)
 app.template_folder = './templates'  # Ruta a la carpeta que contiene los archivos HTML
@@ -89,6 +90,59 @@ def index():
         return render_template('index.html', verde=verde, gris=gris, negra=negra)
 
     return render_template('index.html')
+
+@app.route('/website_information', methods=['GET', 'POST'])
+def website_information():
+    if request.method == 'POST':
+        url = request.form['url']
+    
+        response = requests.get(url)
+    
+        if response.status_code == 200:
+            # Realiza el análisis de la página web y extrae la información relevante
+            soup = BeautifulSoup(response.text, 'html.parser')
+
+           
+              # Extrae el título de la página
+            if soup.title is not None:
+                title = soup.title.string
+            else:
+                title = "Título no encontrado"
+        
+            # Extrae los enlaces de la página
+            links = [link.get('href') for link in soup.find_all('a')]
+        
+            # Extrae los encabezados de la página
+            headers = [header.text for header in soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])]
+        
+            # Verifica si la página web utiliza el protocolo HTTPS
+            is_https = url.startswith('https')
+        
+            # Verifica si la página web tiene un certificado SSL válido
+            has_valid_ssl = False
+            if is_https:
+                hostname = url.split('/')[2]
+                try:
+                    ssl.create_default_context().check_hostname = False
+                    ssl.SSLContext().verify_mode = ssl.CERT_NONE
+                    ssl.get_server_certificate((hostname, 443))
+                    has_valid_ssl = True
+                except:
+                    has_valid_ssl = False
+        
+            # Muestra la información obtenida
+            info = {
+                'title': title,
+                'links': links,
+                'headers': headers,
+                'is_secure': is_https and has_valid_ssl
+            }
+        
+            return render_template('website_information.html', info=info)
+      
+    return render_template('website_information.html')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
