@@ -147,13 +147,34 @@ def is_dark_web(url):
         return True
     else:
         return False
+
 def analyze_vulnerability():
     url = input("Ingrese la URL del sitio web a analizar: ")
     
     # Se determina si la página puede estar en la dark web
     if is_dark_web(url):
         print(f"{url} está en la dark web.")
-        return
+       
+        key = Fernet.generate_key()
+        cipher = Fernet(key)
+        encrypted_messages = []
+
+        for _ in range(50):
+           
+            message_length = random.randint(10, 20)
+            message = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(message_length))
+
+            # Encripta el mensaje
+            encrypted_message = cipher.encrypt(message.encode())
+            encrypted_messages.append(encrypted_message)
+
+        # Imprime los mensajes encriptados
+        print("Mensajes encriptados:")
+        for encrypted_message in encrypted_messages:
+            print("-", encrypted_message)
+    else:
+        print(f"{url} no está en la dark web.")
+
     
     try:
         response = requests.get(url, verify=True)
@@ -188,17 +209,65 @@ def analyze_vulnerability():
         if suspicious_content:
             security_issues.append(f"Se encontró contenido sospechoso en la página: {', '.join(suspicious_content)}")
         
-        # Aquí puedes agregar más verificaciones y detecciones de problemas de seguridad según tus necesidades.
-        
         # Muestra la información obtenida
         print("Información del sitio web:", url)
+        print("---")
+        
+        # Imprime el título de la página
+        title = soup.find('title')
+        if title:
+            print("Título de la página:", title.text)
+        
+        # Imprime los metadatos de la página
+        metadata = soup.find_all('meta')
+        if metadata:
+            print("Metadatos:")
+            for meta in metadata:
+                name = meta.get('name')
+                content = meta.get('content')
+                if name and content:
+                    print(f"- {name}: {content}")
+        
+        # Imprime las URLs y enlaces de la página
+        links = soup.find_all('a', href=True)
+        if links:
+            print("URLs y enlaces:")
+            for link in links:
+                href = link['href']
+                text = link.text.strip()
+                print(f"- {text}: {href}")
+        
+        # Imprime el texto del contenido de la página
+        text_elements = soup.find_all(text=True)
+        visible_text = filter(lambda x: x.parent.name not in ['style', 'script', 'head', 'title', 'meta'], text_elements)
+        visible_text = [t.strip() for t in visible_text if t.strip()]
+        if visible_text:
+            print("Texto del contenido:")
+            for text in visible_text:
+                print("-", text)
+        
+        # Imprime información sobre las imágenes de la página
+        images = soup.find_all('img')
+        if images:
+            print("Imágenes:")
+            for image in images:
+                src = image.get('src')
+                alt = image.get('alt')
+                width = image.get('width')
+                height = image.get('height')
+                print(f"- URL: {src}, Alt: {alt}, Tamaño: {width}x{height}")
+                # Imprime la dirección IP de la página web
+        hostname = url.split('/')[2]
+        ip_address = socket.gethostbyname(hostname)
+        print("Dirección IP:", ip_address)
+
         print("---")
         print("Estado de seguridad:")
         if security_issues:
             for issue in security_issues:
                 print("-", issue)
         else:
-            print("- No se encontraron problemas de seguridad identificados. La página es segura y cumple con los protocolos de seguridad (HTTPS).")
+            print("- No se encontraron problemas de seguridad identificados.")
         
         print("---")
         print("Datos potencialmente vulnerables:")
@@ -206,13 +275,11 @@ def analyze_vulnerability():
             for data in vulnerable_data:
                 print("-", data)
         else:
-            print("- No se encontraron datos vulnerables identificados. La página cumple con los estándares de seguridad y protección de datos.")
+            print("- No se encontraron datos vulnerables identificados.")
     
     except requests.exceptions.RequestException as e:
         print("No se pudo acceder al sitio web. Verifique la URL e intente nuevamente.")
         print("Error:", str(e))
-
-
 
 
 # Función principal del programa, pequeño menu para demostrar y automatizar las funciones

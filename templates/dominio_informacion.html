@@ -8,11 +8,12 @@
 </head>
 <body>
 
-    <form method="POST">
-        <label for="dominio">Dominio:</label>
-        <input type="text" id="dominio" name="dominio" required>
-        <button type="submit">Enviar</button>
+    <form method="POST" action="/dark">
+        <label for="url">URL:</label>
+        <input type="text" id="url" name="url">
+        <input type="submit" value="Analizar">
       </form>
+      
       
       {% if informacion %}
         <h1>Información del dominio {{ informacion.dominio }}</h1>

@@ -3,10 +3,17 @@ import requests
 import tldextract
 from bs4 import BeautifulSoup
 import ssl
+import re
 import json
 import socket
 import whois
 import smtplib
+import string
+import socket
+import random
+from cryptography.fernet import Fernet
+
+
 app = Flask(__name__)
 app.template_folder = './templates'  # Ruta a la carpeta que contiene los archivos HTML
 
@@ -252,6 +259,142 @@ def analyze_accounts():
     
     return render_template('cuentas.html')
 
+
+
+
+def is_dark_web(url):
+    pattern = r'\.onion$'
+    if re.search(pattern, url):
+        return True
+    else:
+        return False
+@app.route('/dark', methods=['GET', 'POST'])
+def analyze_vulnerability():
+    if request.method == 'POST':
+        url = request.form['url']
+
+        # Se determina si la página puede estar en la dark web
+        if is_dark_web(url):
+            result = f"{url} está en la dark web."
+
+            key = Fernet.generate_key()
+            cipher = Fernet(key)
+            encrypted_messages = []
+
+            for _ in range(50):
+                message_length = random.randint(10, 20)
+                message = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(message_length))
+
+                # Encripta el mensaje
+                encrypted_message = cipher.encrypt(message.encode())
+                encrypted_messages.append(encrypted_message)
+
+            # Convierte los mensajes encriptados a una lista de cadenas
+            encrypted_messages = [encrypted_message.decode() for encrypted_message in encrypted_messages]
+
+            return render_template('dark.html', result=result, encrypted_messages=encrypted_messages)
+        else:
+            result = f"{url} NO está en la dark web."
+            
+            try:
+                response = requests.get(url, verify=True)
+
+                # Realiza el análisis de la página web y extrae la información relevante
+                soup = BeautifulSoup(response.text, 'html.parser')
+
+                # Verifica si la página web utiliza el protocolo HTTPS
+                is_https = url.startswith('https')
+
+                # Detecta posibles problemas de seguridad y datos vulnerables
+                security_issues = []
+                vulnerable_data = []
+
+                if not is_https:
+                    security_issues.append("La página no utiliza HTTPS, lo que puede permitir ataques de intermediarios y robo de datos.")
+                else:
+                    security_issues.append("La página utiliza el protocolo HTTPS, lo que la hace segura y efectiva.")
+
+                # Verifica si hay formularios que envíen información sin cifrar
+                insecure_forms = soup.find_all('form', action=lambda x: x and not x.startswith('https'))
+                if insecure_forms:
+                    security_issues.append(f"Se encontraron {len(insecure_forms)} formularios que envían información sin cifrar.")
+
+                # Verifica si hay enlaces a páginas no seguras
+                insecure_links = soup.find_all('a', href=lambda x: x and not x.startswith('https'))
+                if insecure_links:
+                    security_issues.append(f"Se encontraron {len(insecure_links)} enlaces a páginas no seguras.")
+
+                # Verifica si hay contenido sospechoso en la página
+                suspicious_content = soup.find_all(text=re.compile(r'(?i)hack|phish|scam|malware|virus'))
+                if suspicious_content:
+                    security_issues.append(f"Se encontró contenido sospechoso en la página: {', '.join(suspicious_content)}")
+
+                # Muestra la información obtenida
+                result = f"Información del sitio web: {url}"
+                title = soup.find('title')
+                if title:
+                    result += f"\nTítulo de la página: {title.text}"
+
+                metadata = soup.find_all('meta')
+                if metadata:
+                    result += "\nMetadatos:"
+                    for meta in metadata:
+                        name = meta.get('name')
+                        content = meta.get('content')
+                        if name and content:
+                            result += f"\n- {name}: {content}"
+
+                links = soup.find_all('a', href=True)
+                if links:
+                    result += "\nURLs y enlaces:"
+                    for link in links:
+                        href = link['href']
+                        text = link.text.strip()
+                        result += f"\n- {text}: {href}"
+
+                text_elements = soup.find_all(text=True)
+                visible_text = filter(lambda x: x.parent.name not in ['style', 'script', 'head', 'title', 'meta'], text_elements)
+                visible_text = [t.strip() for t in visible_text if t.strip()]
+                if visible_text:
+                    result += "\nTexto del contenido:"
+                    for text in visible_text:
+                        result += f"\n- {text}"
+
+                images = soup.find_all('img')
+                if images:
+                    result += "\nImágenes:"
+                    for image in images:
+                        src = image.get('src')
+                        alt = image.get('alt')
+                        width = image.get('width')
+                        height = image.get('height')
+                        result += f"\n- URL: {src}, Alt: {alt}, Tamaño: {width}x{height}"
+
+                hostname = url.split('/')[2]
+                ip_address = socket.gethostbyname(hostname)
+                result += f"\nDirección IP: {ip_address}"
+
+                result += "\n\nEstado de seguridad:"
+                if security_issues:
+                    for issue in security_issues:
+                        result += f"\n- {issue}"
+                else:
+                    result += "\n- No se encontraron problemas de seguridad identificados."
+                    
+
+                result += "\n\nDatos potencialmente vulnerables:"
+                if vulnerable_data:
+                    for data in vulnerable_data:
+                        result += f"\n- {data}"
+                else:
+                    result += "\n- No se encontraron datos vulnerables identificados."
+
+                return render_template('dark.html', result=result)
+            except requests.exceptions.RequestException as e:
+                error = f"No se pudo acceder al sitio web. Verifique la URL e intente nuevamente.\nError: {str(e)}"
+                return render_template('dark.html', error=error)
+
+    return render_template('dark.html')
 
 
 if __name__ == '__main__':

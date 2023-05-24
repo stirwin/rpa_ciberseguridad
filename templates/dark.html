@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark web</title>
+</head>
+<body>
+    <h1>Análisis de Vulnerabilidad</h1>
+    <form action="" method="post">
+      <label for="url">URL del sitio web:</label>
+      <input type="text" id="url" name="url" required>
+      <br>
+      <input type="submit" value="Analizar">
+    </form>
+
+    <h1>Resultado del Análisis</h1>
+    <pre>{{ result }}</pre>
+    {% if encrypted_messages %}
+      <h2>Mensajes encriptados:</h2>
+      <ul>
+        {% for message in encrypted_messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <a href="/">Volver</a>
+
+
+</body>
+</html>
