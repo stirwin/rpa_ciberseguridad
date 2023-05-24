@@ -6,8 +6,6 @@ import ssl
 import re
 import json
 import socket
-import whois
-import smtplib
 import string
 import socket
 import random
@@ -285,11 +283,11 @@ def analyze_vulnerability():
                 message_length = random.randint(10, 20)
                 message = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(message_length))
 
-                # Encripta el mensaje
+    
                 encrypted_message = cipher.encrypt(message.encode())
                 encrypted_messages.append(encrypted_message)
 
-            # Convierte los mensajes encriptados a una lista de cadenas
+        
             encrypted_messages = [encrypted_message.decode() for encrypted_message in encrypted_messages]
 
             return render_template('dark.html', result=result, encrypted_messages=encrypted_messages)
@@ -398,4 +396,4 @@ def analyze_vulnerability():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0")
