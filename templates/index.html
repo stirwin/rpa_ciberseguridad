@@ -38,7 +38,7 @@
                             clip-rule="evenodd"></path>
                     </svg>
                 </button>
-                <div class="hidden w-full md:block md:w-auto mx-auto" id="navbar-default">
+                <div class="hidden w-full md:block md:w-auto mx-auto" id="navbar-dropdown">
                     <ul
                         class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0">
                         <li>
@@ -51,17 +51,37 @@
                                 class="block py-2 pl-3 pr-4 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-100 md:p-0 ">
                                 Sobre nosotros</a>
                         </li>
-
+                        <li>
+                            <button id="dropdownNavbarLink" data-dropdown-toggle="opcionesMenu"
+                                class="flex items-center justify-between w-full py-2 pl-3 pr-4 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-900 md:p-0 md:w-auto ">Carding
+                                <svg class="w-5 h-5 ml-1" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                        clip-rule="evenodd"></path>
+                                </svg></button>
+                            <!-- Dropdown menu -->
+                            <div id="opcionesMenu"
+                                class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
+                                <ul class="py-2 text-sm text-gray-700 bg-white rounded-lg" aria-labelledby="dropdownLargeButton">
+                                    <li>
+                                        <a href="#" class="block px-4 py-2 font-semibold">Información de sitio web</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="block px-4 py-2 font-semibold">Información de número de teléfono</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="block px-4 py-2 font-semibold">Escáner de subdominio</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="block px-4 py-2 font-semibold">Verificación de dirección de correo electrónico</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
                     </ul>
                 </div>
-                <div class="">
 
-                    <a href="#analizador"
-                        class="bg-yellow-400 text-gray-900 rounded-full font-bold px-8 py-2 shadow-lg">
-                        Analiza tu link
-                    </a>
-
-                </div>
             </div>
         </nav>
         <!--close navbar-->
@@ -71,13 +91,13 @@
             <div class="p-6">
                 <div class="flex items-center">
                     <div>
-                        <div class="max-w-[500px]" style="word-wrap: break-word;">
+                        <div class="max-w-[600px]" style="word-wrap: break-word;">
                             <div class="p-6">
-                                <h1 class="text-6xl font-bold text-white">Analizador de URL</h1>
+                                <h1 class="text-7xl font-bold text-white">Analizador de URL</h1>
                             </div>
 
                             <div class="p-6">
-                                <p class="text-2xl font-sans text-white">
+                                <p class="text-1xl font-sans text-white">
                                     Nuestro sitio web ofrece una herramienta de análisis de URL que clasifica las
                                     direcciones en tablas según su nivel de seguridad. Las URL seguras se muestran en
                                     verde, las relativamente seguras en gris y las peligrosas en negro.
@@ -91,7 +111,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="rounded-full border-40 border-azulejito md:ml-[350px] p-6">
+                    <div class="rounded-full border-40 border-azulejito md:ml-[250px] p-6">
                         <div class="rounded-full border-solid border-25 border-azulejo p-6">
                             <img src="/static/images/logo.svg" alt="logo" class="h-36">
                         </div>
@@ -131,7 +151,6 @@
         <div class="p-8" id="analizador">
             <div class="py-12">
                 <h1 class="text-6xl text-white text-center font-bold">Analiza tu link</h1>
-                <center><img src="/static/images/Line_2.svg" alt="linea2"></center>
             </div>
 
             <!--formulario del analizador-->
