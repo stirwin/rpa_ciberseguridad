@@ -10,25 +10,33 @@
     <body>
     
       <h1>Ingrese una URL para obtener información del sitio web.</h1>
-    <form method="post">
+ 
+      <form method="post">
         <input type="text" name="url" placeholder="Ingrese la URL del sitio web" required>
         <input type="submit" value="Obtener información">
     </form>  
     
+
+
     {% if info %}
         <h1>{{ info.title }}</h1>
+        
         <h2>Enlaces:</h2>
         <ul>
             {% for link in info.links %}
                 <li><a href="{{ link }}">{{ link }}</a></li>
             {% endfor %}
         </ul>
+
+
         <h2>Encabezados:</h2>
         <ul>
             {% for header in info.headers %}
                 <li>{{ header }}</li>
             {% endfor %}
         </ul>
+
+        
         <h2>Seguridad:</h2>
         {% if info.is_secure %}
             <p>El sitio web utiliza el protocolo HTTPS y tiene un certificado SSL válido.</p>
