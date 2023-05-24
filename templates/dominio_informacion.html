@@ -23,32 +23,6 @@
                         <img src="/static/images/logo.svg" class="h-8" alt="Flowbite Logo" />
                     </div>
 
-<<<<<<< HEAD
-    <form method="POST" action="/dark">
-        <label for="url">URL:</label>
-        <input type="text" id="url" name="url">
-        <input type="submit" value="Analizar">
-      </form>
-      
-      
-      {% if informacion %}
-        <h1>Información del dominio {{ informacion.dominio }}</h1>
-        
-        <h2>Dirección IP: {{ informacion.direccion_ip }}</h2>
-        
-        {% if informacion.certificado_ssl %}
-          <h2>Certificado SSL: Disponible</h2>
-          <ul>
-            <li>Emisor del certificado: {{ informacion.certificado_ssl.issuer[0][0][1] }}</li>
-            <li>Sujeto del certificado: {{ informacion.certificado_ssl.subject[0][0][1] }}</li>
-            <li>Fecha de vencimiento del certificado: {{ informacion.certificado_ssl.notAfter }}</li>
-          </ul>
-        {% else %}
-          <h2>Certificado SSL: No disponible</h2>
-        {% endif %}
-      {% endif %}
-      
-=======
                 </a>
                 <button data-collapse-toggle="navbar-default" type="button"
                     class="inline-flex items-center p-2 ml-3 text-sm text-white rounded-lg md:hidden hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-200"
@@ -110,13 +84,12 @@
                                 Accounts</a>
                         </li>
                         <li>
-                            <a href="/cuentas"
+                            <a href="/dark"
                                 class="block py-2 pl-3 pr-4 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-100 md:p-0 ">
                                 Vulnerabilitys</a>
                         </li>
                     </ul>
                 </div>
->>>>>>> f646bc25908a1ff87be8b4ec06c022ea7549e1ed
 
             </div>
         </nav>
