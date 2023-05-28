@@ -152,31 +152,30 @@
 
             {% if info %}
             <div class="py-12 flex justify-center">
-                <div class="max-w-5xl bg-white rounded-lg ">
+                <div class="max-w-5xl bg-white rounded-lg">
                     <div class="py-12">
                         <h1 class="text-5xl text-dark text-center font-bold">Resultados</h1>
                     </div>
 
-                    
+
                     <h1 class="py-2 px-4 text-2xl font-bold">{{ info.title }}</h1>
-                    <div class="px-4 overflow-x-auto">
-                        <table class="w-full text-sm text-left text-gray-500 dar">
-                            <thead class="text-xs text-gray-700 uppercase bg-green-300">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 rounded-l-lg">
-                                        Links
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for link in info.links %}
-                                <tr class="bg-white">
-                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                        <li><a href="{{ link }}">{{ link }}</a></li>
-                                    </th>
-                                </tr>
-                                {% endfor %}
-                        </table>
+                    
+                    <div class="container">
+                        <div class="max-w-5xl">
+                            <div class="px-4">
+                                <div class="bg-green-300 text-sm px-6 py-3 rounded-t-lg">
+                                    <h2 class="text-xs font-bold text-gray-600 uppercase">Links</h2>
+                                </div>
+                            </div>    
+                            <div class="bg-white px-6 py-4 rounded-b-lg" >
+                                <ul class="list-disc px-6 font-medium">
+                                    {% for link in info.links %}
+                                    <li><a href="{{ link }}" style="word-wrap: break-word;">{{ link }}</a></li>
+                                    {% endfor %}
+                                    
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <div class="px-4 overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-500">
@@ -226,7 +225,6 @@
             </div>
             {% endif %}
 
-            
         </div>
         <!--footer-->
 

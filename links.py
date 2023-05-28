@@ -283,17 +283,15 @@ def analyze_vulnerability():
                 message_length = random.randint(10, 20)
                 message = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(message_length))
 
-    
                 encrypted_message = cipher.encrypt(message.encode())
                 encrypted_messages.append(encrypted_message)
 
-        
             encrypted_messages = [encrypted_message.decode() for encrypted_message in encrypted_messages]
 
             return render_template('dark.html', result=result, encrypted_messages=encrypted_messages)
         else:
             result = f"{url} NO está en la dark web."
-            
+
             try:
                 response = requests.get(url, verify=True)
 
@@ -329,70 +327,84 @@ def analyze_vulnerability():
 
                 # Muestra la información obtenida
                 result = f"Información del sitio web: {url}"
+                
+                title_info = ""
                 title = soup.find('title')
                 if title:
-                    result += f"\nTítulo de la página: {title.text}"
+                    title_info += f"\nTítulo de la página: {title.text}"
 
+                metadata_info = ""
+                metadata_list = []
                 metadata = soup.find_all('meta')
                 if metadata:
-                    result += "\nMetadatos:"
+                    metadata_info += "\nMetadatos:"
                     for meta in metadata:
                         name = meta.get('name')
                         content = meta.get('content')
                         if name and content:
-                            result += f"\n- {name}: {content}"
+                            metadata_list.append(f"{name}: {content}")
 
+                links_info = ""
+                links_list = []
                 links = soup.find_all('a', href=True)
                 if links:
-                    result += "\nURLs y enlaces:"
+                    links_info += "\nURLs y enlaces:"
                     for link in links:
                         href = link['href']
                         text = link.text.strip()
-                        result += f"\n- {text}: {href}"
+                        links_list.append(f"{text}: {href}")
 
+                content_text = ""
+                content_list = []
                 text_elements = soup.find_all(text=True)
                 visible_text = filter(lambda x: x.parent.name not in ['style', 'script', 'head', 'title', 'meta'], text_elements)
                 visible_text = [t.strip() for t in visible_text if t.strip()]
                 if visible_text:
-                    result += "\nTexto del contenido:"
+                    content_text += "\nTexto del contenido:"
                     for text in visible_text:
-                        result += f"\n- {text}"
+                        content_list.append(text)
 
+                images_info = ""
+                images_list = []
                 images = soup.find_all('img')
                 if images:
-                    result += "\nImágenes:"
+                    images_info += "\nImágenes:"
                     for image in images:
                         src = image.get('src')
                         alt = image.get('alt')
                         width = image.get('width')
                         height = image.get('height')
-                        result += f"\n- URL: {src}, Alt: {alt}, Tamaño: {width}x{height}"
+                        images_list.append(f"URL: {src}, Alt: {alt}, Tamaño: {width}x{height}")
 
+                ip_address_info = ""
                 hostname = url.split('/')[2]
                 ip_address = socket.gethostbyname(hostname)
-                result += f"\nDirección IP: {ip_address}"
+                ip_address_info += f"\nDirección IP: {ip_address}"
 
-                result += "\n\nEstado de seguridad:"
+                security_issues_info = "\n\nEstado de seguridad:"
                 if security_issues:
                     for issue in security_issues:
-                        result += f"\n- {issue}"
+                        security_issues_info += f"\n- {issue}"
                 else:
-                    result += "\n- No se encontraron problemas de seguridad identificados."
-                    
+                    security_issues_info += "\n- No se encontraron problemas de seguridad identificados."
 
-                result += "\n\nDatos potencialmente vulnerables:"
+                vulnerable_data_info = "\n\nDatos potencialmente vulnerables:"
                 if vulnerable_data:
                     for data in vulnerable_data:
-                        result += f"\n- {data}"
+                        vulnerable_data_info += f"\n- {data}"
                 else:
-                    result += "\n- No se encontraron datos vulnerables identificados."
+                    vulnerable_data_info += "\n- No se encontraron datos vulnerables identificados."
 
-                return render_template('dark.html', result=result)
+                return render_template('dark.html', result=result, title=title_info, metadata=metadata_list, links=links_list, content=content_list, images=images_list, ip_address=ip_address_info, security_issues=security_issues_info, vulnerable_data=vulnerable_data_info)
             except requests.exceptions.RequestException as e:
                 error = f"No se pudo acceder al sitio web. Verifique la URL e intente nuevamente.\nError: {str(e)}"
                 return render_template('dark.html', error=error)
 
     return render_template('dark.html')
+
+
+
+
 
 
 if __name__ == '__main__':
