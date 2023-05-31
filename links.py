@@ -37,31 +37,29 @@ def has_malware(content):
 def has_adult_content(content):
     soup = BeautifulSoup(content, 'html.parser')
     # Verificar si la página web contiene algún indicio de contenido para adultos
-    # Aquí utilizo una palabra clave como ejemplo, puedes personalizarla según tus necesidades
+ 
     if "adulto" in soup.get_text().lower():
         return True
     else:
         return False
-
 def check_link(link):
     try:
         response = requests.get(link, timeout=5)
-        
         if link.startswith("https"):
             if has_malware(response.content) or has_adult_content(response.content):
-                return "lista negra"
+                return "lista negra: el enlace contiene virus, malware o es una página para adultos."
             elif is_trustworthy(response.url):
                 domain = tldextract.extract(response.url).registered_domain
                 if domain.endswith("xvideos.com"):
-                    return "lista negra"
+                    return "lista negra: el enlace es una página para adultos."
                 else:
-                    return "lista verde"
+                    return "lista verde: el enlace está libre de virus y es seguro."
             else:
-                return "lista gris"
+                return "lista gris: el enlace utiliza acortadores o es sospechoso."
         else:
-            return "lista gris"
+            return "lista gris: el enlace utiliza acortadores o es sospechoso."
     except:
-        return "lista gris"
+        return "lista gris: el enlace utiliza acortadores o es sospechoso."
 
 def has_redirect(link):
     try:
@@ -84,20 +82,18 @@ def index():
         # Verificar cada enlace y agregarlo a la lista correspondiente
         for link in enlaces:
             resultado = check_link(link.strip())
-            if resultado == "lista verde":
+            if resultado == "lista verde: el enlace está libre de virus y es seguro.":
                 verde.append(link.strip())
-            elif resultado == "lista negra":
+            elif resultado == "lista negra: el enlace contiene virus, malware o es una página para adultos.":
                 negra.append(link.strip())
-            elif resultado == "lista gris":
-                if has_redirect(link.strip()):
-                    gris.append(link.strip())
-                else:
-                    resultado = "lista gris"
-                    gris.append(link.strip())
+            elif resultado == "lista gris: el enlace utiliza acortadores o es sospechoso.":
+                gris.append(link.strip())
 
-        return render_template('index.html', verde=verde, gris=gris, negra=negra)
+        return render_template('index.html', verde=verde, gris=gris, negra=negra, resultado=resultado)
 
     return render_template('index.html')
+
+
 
 @app.route('/website_information', methods=['GET', 'POST'])
 def website_information():

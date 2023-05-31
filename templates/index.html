@@ -143,58 +143,74 @@
                 </div>
             </form>
 
-            <!--cuadro de vista del analizador-->
-            
-            <div class="pt-24">
-                <div class="container">
-                    <div id="resultado" class="max-w-7xl lg:max-w-8xl mx-auto rounded-lg shadow-lg bg-white border-azuloscuro border-b-2">
-                        <div class="py-4 px-5">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="bg-green-200 rounded-lg" style="word-wrap: break-word;">
-                                    <div>
-                                        <h1 class="text-2xl text-center font-extrabold text-white"
-                                            style="text-shadow: 0px 4px 7px rgba(0, 0, 0, 0.25);">Lista Verde</h1>
-                                    </div>
-                                    <div class="py-3 px2">
-                                        <p class="text-sm text-white font-medium">
-                                            {% for link in verde %}
-                                            <li class="text-gray-900 list-none px-2"
-                                                style="text-shadow: 0px 4px 7px rgba(0, 0, 0, 0.25);">{{ link }}</li>
-                                            {% endfor %}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="bg-gray-400 rounded-lg" style="word-wrap: break-word;">
-                                    <div>
-                                        <h1 class="text-2xl text-center font-extrabold text-white"
-                                            style="text-shadow: 0px 4px 7px rgba(0, 0, 0, 0.25);">Lista Gris</h1>
-                                    </div>
-                                    <div class="py-3 px2">
-                                        <p class="text-sm text-white font-medium">
-                                            {% for link in gris %}
-                                            <li class="text-white list-none px-2">{{ link }}</li>
-                                            {% endfor %}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="bg-gray-900 rounded-lg" style="word-wrap: break-word;">
-                                    <div>
-                                        <h1 class="text-2xl text-center font-extrabold text-white"
-                                            style="text-shadow: 0px 4px 7px rgba(0, 0, 0, 0.25);">Lista Negra</h1>
-                                    </div>
-                                    <div class="py-3 px2">
-                                        <p class="text-sm text-white font-medium">
-                                            {% for link in negra %}
-                                            <li class="text-white list-none px-2">{{ link }}</li>
-                                            {% endfor %}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+<!--cuadro de vista del analizador-->
+
+<div class="pt-24">
+    <div class="container">
+        <div id="resultado" class="max-w-7xl lg:max-w-8xl mx-auto rounded-lg shadow-lg bg-white border-azuloscuro border-b-2">
+            <div class="py-4 px-5">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-green-200 rounded-lg" style="word-wrap: break-word;">
+                        <div>
+                            <h1 class="text-2xl text-center font-extrabold text-white"
+                                style="text-shadow: 0px 4px 7px rgba(0, 0, 0, 0.25);">Lista Verde</h1>
+                        </div>
+                        <div class="py-3 px2">
+                            <p class="text-sm text-white font-medium">
+                                {% for link in verde %}
+                                <li class="text-gray-900 list-none px-2"
+                                    style="text-shadow: 0px 4px 7px rgba(0, 0, 0, 0.25);">{{ link }}</li>
+                                {% endfor %}
+                            </p>
+                            <p class="text-sm text-black font-medium">
+                                {% if resultado == "lista verde: el enlace está libre de virus y es seguro." %}
+                                {{ resultado }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-400 rounded-lg" style="word-wrap: break-word;">
+                        <div>
+                            <h1 class="text-2xl text-center font-extrabold text-white"
+                                style="text-shadow: 0px 4px 7px rgba(0, 0, 0, 0.25);">Lista Gris</h1>
+                        </div>
+                        <div class="py-3 px2">
+                            <p class="text-sm text-white font-medium">
+                                {% for link in gris %}
+                                <li class="text-white list-none px-2">{{ link }}</li>
+                                {% endfor %}
+                            </p>
+                            <p class="text-sm text-black font-medium">
+                                {% if resultado == "lista gris: el enlace utiliza acortadores o es sospechoso." %}
+                                {{ resultado }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg" style="word-wrap: break-word;">
+                        <div>
+                            <h1 class="text-2xl text-center font-extrabold text-white"
+                                style="text-shadow: 0px 4px 7px rgba(0, 0, 0, 0.25);">Lista Negra</h1>
+                        </div>
+                        <div class="py-3 px2">
+                            <p class="text-sm text-white font-medium">
+                                {% for link in negra %}
+                                <li class="text-white list-none px-2">{{ link }}</li>
+                                {% endfor %}
+                            </p>
+                            <p class="text-sm text-white font-medium">
+                                {% if resultado == "lista negra: el enlace contiene virus, malware o es una página para adultos." %}
+                                {{ resultado }}
+                                {% endif %}
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
             
         </div>
 

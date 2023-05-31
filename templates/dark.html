@@ -125,8 +125,8 @@
                     <div class="flex items-center">
                         <div>
                             <input type="text" name="url" placeholder="Ingrese la URL del sitio web"
-                            class="rounded-full border-azuloscuro border-b-2 border-t-0 border-l-0 border-r-0 py-2 bg-blanco md:w-[400px] text-2xl text-azuloscuro font-bold shadow-lg placeholder-azuloscuro"
-                            required>
+                                class="rounded-full border-azuloscuro border-b-2 border-t-0 border-l-0 border-r-0 py-2 bg-blanco md:w-[400px] text-2xl text-azuloscuro font-bold shadow-lg placeholder-azuloscuro"
+                                required>
                         </div>
                         <div class="mx-4 md:mx-[100px]">
                             <button type="submit"
@@ -136,7 +136,7 @@
                     </div>
                 </div>
             </form>
-
+        
             {% if result %}
             <div class="pt-32">
                 <div class="flex items-center">
@@ -155,7 +155,7 @@
                                 </div>
                             </div>
                             <div class="bg-white px-6 py-4 rounded-b-lg" style="word-wrap: break-word;">
-                                <p class=" px-6 font-medium">
+                                <p class="px-6 font-medium">
                                     {{ metadata }}
                                 </p>
                             </div>
@@ -170,7 +170,6 @@
                                     {% for link in links %}
                                     <li><a href="{{ link }}" style="word-wrap: break-word;">{{ link }}</a></li>
                                     {% endfor %}
-                                    
                                 </ul>
                             </div>
                             <!-- texto del contenido-->
@@ -184,7 +183,6 @@
                                     {% for text in content %}
                                     <li>{{ text }}</li>
                                     {% endfor %}
-                                    
                                 </ul>
                             </div>
                             <!-- imagenes-->
@@ -194,18 +192,18 @@
                                 </div>
                             </div>
                             <div class="bg-white px-6 py-4 rounded-b-lg" style="word-wrap: break-word;">
-                                <p class=" px-6 font-medium">
+                                <p class="px-6 font-medium">
                                     {{ images }}
                                 </p>
                             </div>
-                            <!-- Direccion ip-->
+                            <!-- Dirección IP -->
                             <div class="px-4 pt-5">
                                 <div class="bg-green-300 text-sm px-6 py-3 rounded-t-lg">
                                     <h2 class="text-xs font-bold text-gray-600 uppercase">Dirección IP</h2>
                                 </div>
                             </div>
                             <div class="bg-white px-6 py-4 rounded-b-lg" style="word-wrap: break-word;">
-                                <p class=" px-6 font-medium">
+                                <p class="px-6 font-medium">
                                     {{ ip_address }}
                                 </p>
                             </div>
@@ -216,7 +214,7 @@
                                 </div>
                             </div>
                             <div class="bg-white px-6 py-4 rounded-b-lg" style="word-wrap: break-word;">
-                                <p class=" px-6 font-medium">
+                                <p class="px-6 font-medium">
                                     {{ security_issues }}
                                 </p>
                             </div>
@@ -228,17 +226,31 @@
                                 </div>
                             </div>
                             <div class="bg-white px-6 py-4 rounded-b-lg" style="word-wrap: break-word;">
-                                <p class=" px-6 font-medium">
+                                <p class="px-6 font-medium">
                                     {{ vulnerable_data }}
                                 </p>
                             </div>
+                            <!-- Mensajes encriptados -->
+                            {% if encrypted_messages %}
+                            <div class="px-4 pt-5">
+                                <div class="bg-green-300 text-sm px-6 py-3 rounded-t-lg">
+                                    <h2 class="text-xs font-bold text-gray-600 uppercase">informacion que se encontro en la web profunda</h2>
+                                </div>
+                            </div>
+                            <div class="bg-white px-6 py-4 rounded-b-lg" style="word-wrap: break-word;">
+                                <ul class="list-disc px-6 font-medium">
+                                    {% for message in encrypted_messages %}
+                                    <li>{{ message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
             {% elif error %}
             <h2>{{ error }}</h2>
-
             {% endif %}
         </div>
     </div>
